@@ -4,11 +4,14 @@ describe "StaticPages" do
 
 	#リスト3.9(Sample Appという文字列があるかどうか)
 	describe "Home page" do
+
+		#コンテンツに'Sample App'の文字列が存在するか
     	it "should have the content 'Sample App'" do
       		visit '/static_pages/home'
       		expect(page).to have_content('Sample App')
     	end
 
+    	#タイトルが'Ruby〜Home'となっているか
     	it "should have the right title" do
 			visit '/static_pages/home'
 			expect(page).to have_title("Ruby on Rails Tutorial Sample App | Home")
