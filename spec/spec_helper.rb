@@ -39,6 +39,6 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
-  #リスト3.10(ブラウザを読み込みに行ってくれるらしい)
+  # リスト3.10(ブラウザを読み込みに行ってくれるらしい)
   config.include Capybara::DSL
 end
