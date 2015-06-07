@@ -8,12 +8,15 @@ describe User do
 
   subject { @user }
 
+  # メソッドが値を返すかをチェックする
   it { should respond_to(:name) }
   it { should respond_to(:email) }
   it { should respond_to(:password_digest) }
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
   it { should respond_to(:authenticate) }
+
+  # 保存可能な状態かをチェックする
   it { should be_valid }
 
   describe "when name is not present" do
@@ -51,7 +54,7 @@ describe User do
     before do
       user_with_same_email = @user.dup
       user_with_same_email.email = @user.email.upcase
-      user_with_same_email.save # いる？
+      user_with_same_email.save # 複製したものを保存
     end
 
     it { should_not be_valid }
