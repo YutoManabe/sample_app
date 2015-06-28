@@ -1,5 +1,10 @@
 class User < ActiveRecord::Base
 	has_many :microposts, dependent: :destroy
+	has_many :followers, through: :reverse_relationships, source: :follower
+	has_many :relationships, foreign_key: "follower_id", dependent: :destroy # relationshipsテーブルのどのidと紐付けするか(外部キー)。foreign_keyを使えば、_idというレールから外れることができる。ユーザーが削除されたらrelationshipsの情報も削除してしまう。
+	has_many :reverse_relationships, foreign_key: "followed_id", class_name: "Relationship", dependent: :destroy # reverse_relationshipクラスを探しに行かないように。
+	has_many :followed_users, through: :relationships, source: :followed # idの集合に対して、それぞれにfollowedメソッドを実行してください。（mapメソッドと同様の機能）
+	# has_manyの本来の使い方：作りたいメソッド名を先に置く。便利メソッドを作るためのものである。
 
 	# メールアドレスのフォーマット
 	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
@@ -28,8 +33,24 @@ class User < ActiveRecord::Base
 	end
 
 	def feed
-		Micropost.where("user_id = ?", id)
+		# Micropost.where("user_id = ?", id)
+		Micropost.from_users_followed_by(self)
 	end
+
+	# フォロー済みであれば、ユーザー情報を得る
+	def following?(other_user)
+		relationships.find_by(followed_id: other_user.id)
+	end
+
+	# フォロー機能
+	def follow!(other_user)
+		self.relationships.create!(followed_id: other_user.id)
+	end
+
+	# アンフォロー機能
+	def unfollow!(other_user)
+    	relationships.find_by(followed_id: other_user.id).destroy
+  	end
 
 	private
 		# 暗号化したremember_tokenをDBに保存
